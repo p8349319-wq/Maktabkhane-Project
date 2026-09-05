@@ -3,9 +3,9 @@ from enum import Enum
 from utils import name_validation
 
 class Priority_enum(Enum):
-        HIGH = "High"
-        MEDIUM = "Medium"
-        LOW = "Low"   
+        HIGH = 3
+        MEDIUM = 2
+        LOW = 1  
 
 class Task:
     ids = iter(range(1000,9999))
@@ -49,10 +49,16 @@ class Task:
         
         self.status = False
         return f"Task {self.name} status is active again."
+
     
+    priority_names = {
+         1 : "Low",
+         2 : "Medium",
+         3 : "High"
+    }
 
     def __str__(self):
-        return f"Task atributes: name = {self.name}, priority = {self.priority.value}, status = {self.status}, added_time = {self.time}"
+        return f"Task atributes: name = {self.name}, priority = {self.priority_names[self.priority.value]}, status = {self.status}, added_time = {self.time}"
     def __repr__(self):
-        return f"Task atributes: name = {self.name}, priority = {self.priority.value}, status = {self.status}, added_time = {self.time}"
+        return f"Task atributes: name = {self.name}, priority = {self.priority_names[self.priority.value]}, status = {self.status}, added_time = {self.time}"
 
