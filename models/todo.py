@@ -1,6 +1,7 @@
 from tasks import Task,Priority_enum
 from csv import DictWriter,DictReader
 from datetime import strptime,datetime
+from utils import name_validation
 
 class Todo:
     def __init__(self):
@@ -39,6 +40,52 @@ class Todo:
 
     def  get_tasks_sorted_by_priority(self):
         return list(sorted(self.tasks.values(),key=lambda task: task.priority.value,reverse=True))
+
+    def get_active_tasks(self):
+        if not self.tasks:
+            return []
+        return list(filter(lambda task: task.status is False,self.tasks.values()))
+
+    def get_completed_tasks(self):
+        if not self.tasks:
+            return []
+        return list(filter(lambda task: task.status is True, self.tasks.values()))
+
+    def update_task_name(self, id: int, new_name: str):
+        try:
+            task = self.get_task(id)    
+            if task is None:
+                return "Task not found"
+
+            old_name = task.name
+        
+            from utils import name_validation
+            validated_name = name_validation(new_name)    
+            task.name = validated_name
+            self.save_csv()
+            return f"Task {old_name} successfully updated to {task.name}"
+        
+        except ValueError as e:
+            return f"Error: {e}"
+        except Exception as e:
+            return f"Unexpected error: {e}"
+
+    def update_task_priority(self, id: int, new_priority: Priority_enum):
+        try:
+            task = self.get_task(id)
+            if task is None:
+                return "Task not found"
+            
+            old_priority = task.priority.value
+            task.priority = new_priority
+            self.save_csv()
+            return f"Task {task.name} priority updated from {old_priority} to {task.priority.value}"
+        
+        except TypeError as e:
+            return f"Error: {e}"
+        except Exception as e:
+            return f"Unexpected error: {e}"
+
 
     def save_csv(self):
         with open("Tasks.csv","w",newline="") as output_file:
